@@ -1,0 +1,851 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Smart Event Parser</title>
+    
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20,400,0,0"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        --primary: #6366f1;
+        --primary-dark: #4f46e5;
+        --primary-light: #a5b4fc;
+        --accent: #10b981;
+        --accent-light: #34d399;
+        --background: #f8fafc;
+        --surface: #ffffff;
+        --surface-hover: #f1f5f9;
+        --border: #e2e8f0;
+        --border-light: #f1f5f9;
+        --text: #1e293b;
+        --text-secondary: #64748b;
+        --text-muted: #94a3b8;
+        --success: #10b981;
+        --warning: #f59e0b;
+        --danger: #ef4444;
+        --shadow-sm: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
+        --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+        --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+        --radius: 12px;
+        --radius-sm: 8px;
+        --radius-lg: 16px;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      html,
+      body {
+        height: 100%;
+        margin: 0;
+        padding: 0;
+      }
+
+      body {
+        font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+        background: var(--background);
+        color: var(--text);
+        width: 380px;
+        margin: 0;
+        padding: 0;
+        line-height: 1.5;
+        font-size: 14px;
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+      }
+
+      .container {
+        background: var(--surface);
+        margin: 0;
+        padding: 16px;
+        min-height: 100vh;
+        position: relative;
+      }
+
+      /* Header */
+      .header {
+        display: flex;
+        align-items: center;
+        margin-bottom: 16px;
+        padding-bottom: 12px;
+        border-bottom: 1px solid var(--border-light);
+      }
+
+      .header-icon {
+        width: 35px;
+        height: 35px;
+        margin-right: 10px;
+        border-radius: var(--radius-sm);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        overflow: hidden;
+      }
+
+      .logo-image {
+        width: 100%;
+        height: 100%;
+        object-fit: contain;
+        border-radius: var(--radius-sm);
+      }
+
+      .header-content h1 {
+        font-size: 20px;
+        font-weight: 600;
+        margin: 0;
+        color: var(--text);
+        letter-spacing: -0.025em;
+      }
+
+      .header-content p {
+        font-size: 12px;
+        margin: 0;
+        color: var(--text-secondary);
+        font-weight: 400;
+      }
+
+      /* Header auth controls */
+      .header-auth {
+        margin-left: auto;
+        flex-shrink: 0;
+      }
+
+      #headerSignedOut {
+        display: flex;
+        gap: 6px;
+      }
+
+      .header-auth .btn {
+        padding: 4px 8px;
+        font-size: 11px;
+        min-height: 28px;
+        white-space: nowrap;
+      }
+
+      .header-auth .btn .btn-icon {
+        font-size: 14px;
+      }
+
+      .user-menu {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+      }
+
+      .user-email {
+        font-size: 12px;
+        color: var(--text-secondary);
+        max-width: 100px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        font-weight: 500;
+      }
+
+      /* Cards */
+      .card {
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        padding: 16px;
+        margin-bottom: 12px;
+        box-shadow: var(--shadow-sm);
+        transition: all 0.2s ease;
+      }
+
+      .card:hover {
+        border-color: var(--border);
+        box-shadow: var(--shadow-md);
+      }
+
+      .card-header {
+        display: flex;
+        align-items: center;
+        margin-bottom: 12px;
+      }
+
+      .card-header .icon {
+        width: 18px;
+        height: 18px;
+        margin-right: 8px;
+        color: var(--primary);
+        font-size: 18px;
+      }
+
+      .card-header h3 {
+        font-size: 14px;
+        font-weight: 600;
+        margin: 0;
+        color: var(--text);
+      }
+
+      /* Auth Section */
+      .auth-status {
+        display: flex;
+        align-items: center;
+        padding: 10px 14px;
+        background: var(--border-light);
+        border-radius: var(--radius-sm);
+        margin-bottom: 12px;
+      }
+
+      .status-indicator {
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        margin-right: 8px;
+      }
+
+      .status-indicator.online {
+        background: var(--success);
+      }
+
+      .status-indicator.offline {
+        background: var(--text-muted);
+      }
+
+      .status-text {
+        font-size: 13px;
+        color: var(--text-secondary);
+        font-weight: 500;
+      }
+
+      .auth-buttons {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 10px;
+        margin-bottom: 12px;
+      }
+
+      /* Usage Section */
+      .usage-card {
+        background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+        border: 1px solid var(--border-light);
+        border-radius: var(--radius);
+        padding: 12px;
+        margin-bottom: 12px;
+      }
+
+      .usage-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 8px;
+      }
+
+      .usage-title {
+        font-size: 13px;
+        font-weight: 500;
+        color: var(--text-secondary);
+      }
+
+      .usage-count {
+        font-size: 18px;
+        font-weight: 700;
+        color: var(--text);
+      }
+
+      .usage-bar-container {
+        position: relative;
+        height: 6px;
+        background: #e2e8f0;
+        border-radius: 3px;
+        overflow: hidden;
+        margin-bottom: 8px;
+      }
+
+      .usage-progress {
+        height: 100%;
+        background: linear-gradient(90deg, var(--primary) 0%, var(--accent) 100%);
+        border-radius: 3px;
+        transition: width 0.3s ease;
+        width: 0%;
+      }
+
+      .usage-progress.warning {
+        background: linear-gradient(90deg, var(--warning) 0%, #fbbf24 100%);
+      }
+
+      .usage-progress.danger {
+        background: linear-gradient(90deg, var(--danger) 0%, #f87171 100%);
+      }
+
+      .usage-progress.unlimited {
+        background: linear-gradient(90deg, var(--success) 0%, var(--accent-light) 100%);
+      }
+
+      .usage-label {
+        font-size: 11px;
+        color: var(--text-muted);
+        text-align: center;
+      }
+
+      /* Buttons */
+      .btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        padding: 11px 16px;
+        font-size: 14px;
+        font-weight: 500;
+        border-radius: var(--radius-sm);
+        border: none;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        text-decoration: none;
+        gap: 6px;
+        min-height: 40px;
+      }
+
+      .btn-primary {
+        background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+        color: white;
+        box-shadow: var(--shadow-sm);
+      }
+
+      .btn-primary:hover {
+        background: linear-gradient(135deg, var(--primary-dark) 0%, #3730a3 100%);
+        box-shadow: var(--shadow-md);
+        transform: translateY(-1px);
+      }
+
+      .btn-secondary {
+        background: var(--surface);
+        color: var(--text-secondary);
+        border: 1px solid var(--border);
+      }
+
+      .btn-secondary:hover {
+        background: var(--surface-hover);
+        border-color: var(--text-muted);
+      }
+
+      .btn-success {
+        background: linear-gradient(135deg, var(--success) 0%, var(--accent-light) 100%);
+        color: white;
+        box-shadow: var(--shadow-sm);
+      }
+
+      .btn-success:hover {
+        background: linear-gradient(135deg, #059669 0%, var(--success) 100%);
+        box-shadow: var(--shadow-md);
+        transform: translateY(-1px);
+      }
+
+      .btn-warning {
+        background: linear-gradient(135deg, var(--warning) 0%, #fbbf24 100%);
+        color: white;
+        box-shadow: var(--shadow-sm);
+      }
+
+      .btn-warning:hover {
+        background: linear-gradient(135deg, #d97706 0%, var(--warning) 100%);
+        box-shadow: var(--shadow-md);
+        transform: translateY(-1px);
+      }
+
+      .btn-full {
+        width: 100%;
+        margin-bottom: 8px;
+      }
+
+      .btn-icon {
+        font-size: 16px;
+      }
+
+      /* Form Elements */
+      .form-group {
+        margin-bottom: 12px;
+      }
+
+      .form-label {
+        display: block;
+        font-size: 13px;
+        font-weight: 500;
+        color: var(--text-secondary);
+        margin-bottom: 4px;
+      }
+
+      .form-input {
+        width: 100%;
+        padding: 10px 12px;
+        font-size: 14px;
+        border: 1px solid var(--border);
+        border-radius: var(--radius-sm);
+        background: var(--surface);
+        transition: all 0.2s ease;
+        font-family: inherit;
+      }
+
+      .form-input:focus {
+        outline: none;
+        border-color: var(--primary);
+        box-shadow: 0 0 0 3px rgb(99 102 241 / 0.1);
+      }
+
+      .form-input::placeholder {
+        color: var(--text-muted);
+      }
+
+      .textarea {
+        resize: vertical;
+        min-height: 70px;
+      }
+
+      /* Checkbox */
+      .checkbox-group {
+        display: flex;
+        align-items: center;
+        margin-bottom: 10px;
+        cursor: pointer;
+      }
+
+      .checkbox-group input[type="checkbox"] {
+        margin-right: 8px;
+        accent-color: var(--primary);
+      }
+
+      .checkbox-group label {
+        font-size: 13px;
+        color: var(--text-secondary);
+        cursor: pointer;
+        margin: 0;
+      }
+
+      /* Select */
+      .form-select {
+        width: 100%;
+        padding: 10px 12px;
+        font-size: 14px;
+        border: 1px solid var(--border);
+        border-radius: var(--radius-sm);
+        background: var(--surface);
+        background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='m6 8 4 4 4-4'/%3e%3c/svg%3e");
+        background-position: right 8px center;
+        background-repeat: no-repeat;
+        background-size: 16px;
+        appearance: none;
+      }
+
+      /* Result */
+      .result-card {
+        background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
+        border: 1px solid #bae6fd;
+        border-radius: var(--radius);
+        padding: 12px;
+        margin: 12px 0;
+        font-size: 13px;
+        line-height: 1.5;
+        white-space: pre-wrap;
+      }
+
+      /* Footer */
+      .footer {
+        text-align: center;
+        padding-top: 12px;
+        margin-top: 12px;
+        border-top: 1px solid var(--border-light);
+        color: var(--text-muted);
+        font-size: 11px;
+      }
+
+      /* Hide/Show states */
+      .hidden {
+        display: none !important;
+      }
+
+      /* Hide old auth section - auth is now in header */
+      #authSection {
+        display: none !important;
+      }
+
+      /* Subscription Badge */
+      .pro-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+        background: linear-gradient(135deg, var(--success) 0%, var(--accent-light) 100%);
+        color: white;
+        font-size: 11px;
+        font-weight: 600;
+        padding: 4px 8px;
+        border-radius: 12px;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+      }
+
+      /* Material Icons */
+      .material-symbols-outlined {
+        font-variation-settings: 
+          'FILL' 0,
+          'wght' 400,
+          'GRAD' 0,
+          'opsz' 20;
+      }
+
+      /* Compact sections for secondary features */
+      .compact-auth {
+        margin-top: 16px;
+        background: var(--border-light);
+        border: 1px solid var(--border);
+      }
+
+      .compact-auth .card-header h3 {
+        font-size: 13px;
+        color: var(--text-secondary);
+      }
+
+      .compact-auth .auth-status {
+        background: var(--surface);
+        margin-bottom: 10px;
+      }
+
+      .compact-auth .auth-buttons {
+        gap: 8px;
+      }
+
+      .compact-auth .btn {
+        padding: 6px 10px;
+        font-size: 13px;
+        min-height: 32px;
+      }
+
+      .compact-subscription {
+        background: var(--border-light);
+        border: 1px solid var(--border);
+        margin-top: 8px;
+      }
+
+      .compact-subscription .card-header h3 {
+        font-size: 13px;
+        color: var(--text-secondary);
+      }
+
+      .compact-subscription p {
+        font-size: 12px !important;
+        margin-bottom: 10px !important;
+      }
+
+      .compact-subscription .btn {
+        padding: 6px 10px;
+        font-size: 13px;
+        min-height: 32px;
+      }
+
+      .compact-usage {
+        background: var(--surface);
+        border: 1px solid var(--border);
+        margin-bottom: 10px;
+      }
+
+      .compact-usage .usage-title {
+        font-size: 12px;
+      }
+
+      .compact-usage .usage-count {
+        font-size: 16px;
+      }
+
+      .compact-usage .usage-label {
+        font-size: 10px;
+      }
+
+      /* Primary action cards - make them more prominent */
+      .card:not(.compact-auth):not(.compact-subscription) {
+        border: 2px solid var(--border);
+        box-shadow: var(--shadow-md);
+      }
+
+      .card:not(.compact-auth):not(.compact-subscription):hover {
+        border-color: var(--primary-light);
+        box-shadow: var(--shadow-lg);
+      }
+
+      /* Modal styles */
+      .modal {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        z-index: 1000;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .modal.hidden {
+        display: none;
+      }
+
+      .modal-overlay {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.5);
+        backdrop-filter: blur(4px);
+      }
+
+      .modal-content {
+        background: var(--surface);
+        border-radius: var(--radius);
+        box-shadow: var(--shadow-lg);
+        width: 320px;
+        max-width: 90vw;
+        position: relative;
+        z-index: 1;
+      }
+
+      .modal-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 16px;
+        border-bottom: 1px solid var(--border);
+      }
+
+      .modal-header h3 {
+        margin: 0;
+        font-size: 16px;
+        font-weight: 600;
+      }
+
+      .modal-close {
+        background: none;
+        border: none;
+        cursor: pointer;
+        padding: 4px;
+        border-radius: 4px;
+        color: var(--text-secondary);
+        transition: all 0.2s ease;
+      }
+
+      .modal-close:hover {
+        background: var(--surface-hover);
+        color: var(--text);
+      }
+
+      .modal-body {
+        padding: 16px;
+      }
+
+      .modal-buttons {
+        display: flex;
+        gap: 8px;
+        margin-top: 16px;
+      }
+
+      .modal-buttons .btn {
+        flex: 1;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <!-- Header -->
+      <div class="header">
+        <div class="header-icon">
+          <img src="icons/logo.png" alt="GPal Logo" class="logo-image">
+        </div>
+        <div class="header-content">
+          <h1>GPal</h1>
+          <!--<p>Smart Event Parser for Google Calendar</p>-->
+        </div>
+        
+        <!-- Auth controls in top right -->
+        <div class="header-auth">
+          <div id="headerSignedOut">
+            <button class="btn btn-primary btn-sm" id="headerSignInBtn">
+              <span class="material-symbols-outlined btn-icon">login</span>
+              Sign In
+            </button>
+            <button class="btn btn-secondary btn-sm" id="headerSignUpBtn">
+              <span class="material-symbols-outlined btn-icon">person_add</span>
+              Sign Up
+            </button>
+          </div>
+          
+          <div id="headerSignedIn" class="hidden">
+            <div class="user-menu">
+              <span class="user-email" id="headerUserEmail"></span>
+              <button class="btn btn-secondary btn-sm" id="headerSignOutBtn">
+                <span class="material-symbols-outlined btn-icon">logout</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Event Parser Section - MOVED TO TOP -->
+      <div class="card">
+        <div class="card-header">
+          <span class="material-symbols-outlined icon">auto_fix_high</span>
+          <h3>Parse Event</h3>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="eventText">Event Description</label>
+          <textarea
+            id="eventText"
+            class="form-input textarea"
+            rows="3"
+            placeholder="e.g., Lunch with Sarah tomorrow at 3PM at Café Rio"
+          ></textarea>
+        </div>
+
+        <button class="btn btn-primary btn-full" id="parse">
+          <span class="material-symbols-outlined btn-icon">search</span>
+          Parse Event Details
+        </button>
+
+        <div id="result" class="result-card hidden"></div>
+      </div>
+
+      <!-- Calendar Section - MOVED TO TOP -->
+      <div class="card">
+        <div class="card-header">
+          <span class="material-symbols-outlined icon">calendar_month</span>
+          <h3>Add to Calendar</h3>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="calendarSelect">Select Calendar</label>
+          <div id="calendarContainer">
+            <select id="calendarSelect" class="form-select">
+              <option disabled selected>Loading calendars...</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="checkbox-group">
+          <input type="checkbox" id="allDayToggle" />
+          <label for="allDayToggle">All Day Event</label>
+        </div>
+
+        <div class="checkbox-group">
+          <input type="checkbox" id="reviewMode" />
+          <label for="reviewMode">Review before adding</label>
+        </div>
+
+        <button class="btn btn-success btn-full" id="addEvent">
+          <span class="material-symbols-outlined btn-icon">event</span>
+          Add to Calendar
+        </button>
+      </div>
+
+      <!-- Usage Counter (when signed in) -->
+      <div class="card hidden" id="usageSection">
+        <div class="card-header">
+          <span class="material-symbols-outlined icon">analytics</span>
+          <h3>Usage</h3>
+        </div>
+        
+        <div class="usage-card" id="usageCounter">
+          <div class="usage-header">
+            <span class="usage-title">API Requests</span>
+            <span class="usage-count">
+              <span id="usageCount">0</span>/<span id="usageLimit">5</span>
+            </span>
+          </div>
+          <div class="usage-bar-container">
+            <div id="usageProgress" class="usage-progress"></div>
+          </div>
+          <div class="usage-label">Free tier includes 5 requests total</div>
+        </div>
+        
+        <!-- Subscription Button -->
+        <button class="btn btn-warning btn-full" id="subscribeBtn">
+          <span class="material-symbols-outlined btn-icon">star</span>
+          Subscribe - $0.99/month
+        </button>
+      </div>
+
+      <!-- Compact Auth Section - MOVED TO BOTTOM -->
+      <div class="card compact-auth" id="authSection">
+        <div class="card-header">
+          <span class="material-symbols-outlined icon">person</span>
+          <h3>Account</h3>
+        </div>
+
+        <div id="whenSignedOut">
+          <div class="auth-status">
+            <div class="status-indicator offline"></div>
+            <span class="status-text">Sign in to unlock full features</span>
+          </div>
+          <div class="auth-buttons">
+            <button class="btn btn-primary" id="signInBtn">
+              <span class="material-symbols-outlined btn-icon">login</span>
+              Sign In
+            </button>
+            <button class="btn btn-secondary" id="signUpBtn">
+              <span class="material-symbols-outlined btn-icon">person_add</span>
+              Sign Up
+            </button>
+          </div>
+        </div>
+
+        <div id="whenSignedIn" class="hidden">
+          <div class="auth-status">
+            <div class="status-indicator online"></div>
+            <span class="status-text">Signed in as <strong id="userEmail"></strong></span>
+          </div>
+          
+          <button class="btn btn-secondary btn-full" id="signOutBtn">
+            <span class="material-symbols-outlined btn-icon">logout</span>
+            Sign Out
+          </button>
+        </div>
+      </div>
+
+      <!-- Footer -->
+      <div class="footer">
+        Made with ❤️ for Google Calendar users
+      </div>
+    </div>
+
+    <!-- Auth Modal -->
+    <div id="authModal" class="modal hidden">
+      <div class="modal-overlay"></div>
+      <div class="modal-content">
+        <div class="modal-header">
+          <h3 id="modalTitle">Sign In</h3>
+          <button class="modal-close" id="closeModal">
+            <span class="material-symbols-outlined">close</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <form id="authForm">
+            <div class="form-group">
+              <label class="form-label" for="modalEmail">Email</label>
+              <input type="email" id="modalEmail" class="form-input" placeholder="Enter your email" required>
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="modalPassword">Password</label>
+              <input type="password" id="modalPassword" class="form-input" placeholder="Enter your password" required>
+            </div>
+            <div id="forgotPasswordLink" class="form-group">
+              <a href="#" id="forgotPasswordBtn" style="color: var(--primary); text-decoration: none; font-size: 13px;">Forgot your password?</a>
+            </div>
+            <div class="modal-buttons">
+              <button type="button" class="btn btn-secondary" id="cancelAuth">Cancel</button>
+              <button type="submit" class="btn btn-primary" id="submitAuth">Sign In</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+
+    <!-- Add the new bundled script -->
+    <script src="dist/popup.bundle.js"></script>
+  </body>
+</html>

@@ -1,0 +1,57 @@
+# Environment variables and secrets
+.env
+.env.local
+.env.production
+.env.staging
+*.pem
+*.key
+
+# Ignore deployment and build folders
+.vercel
+node_modules/
+dist/
+build/
+
+# Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+lerna-debug.log*
+
+# Runtime data
+pids
+*.pid
+*.seed
+*.pid.lock
+
+# Coverage directory used by tools like istanbul
+coverage/
+*.lcov
+
+# Ignore OS files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Editor files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Package manager
+yarn.lock
+
+# Temporary files
+.tmp/
+temp/
+
+# Firebase
+.firebase/
+firebase-debug.log

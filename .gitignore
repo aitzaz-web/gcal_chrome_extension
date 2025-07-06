@@ -1,0 +1,75 @@
+# Development and deployment
+.vercel/
+node_modules/
+.env
+.env.local
+.env.production
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Editor and IDE files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Build and distribution
+dist/
+build/
+*.tgz
+*.tar.gz
+
+# Chrome extension specific
+*.crx
+*.pem
+web-store-upload.zip
+
+# Temporary files
+.tmp/
+temp/
+
+# Firebase (if using Firebase hosting locally)
+.firebase/
+firebase-debug.log
+
+# Package manager
+package-lock.json
+yarn.lock
+
+# Runtime data
+*.pid
+*.seed
+*.pid.lock
+
+# Environment and secret files
+.env
+.env.*
+
+# Test coverage
+coverage/
+*.lcov
+
+# Cache
+.cache/
+.nyc_output/
+
+# Misc
+*.bak
+*.orig
+
+# Ignore output from Tesseract or other OCR libraries
+*.traineddata
